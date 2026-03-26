@@ -91,28 +91,26 @@ DSS для швидкого вибору оптимального замовле
 ### ERD
 
 ```mermaid
-classDiagram
-direction BT
-class alternatives {
-   text name
-   text description
-   integer id
-}
-class criteria {
-   text name
-   text type
-   text description
-   integer id
-}
-class evaluations {
-   real value
-   integer alternative_id
-   integer criterion_id
-}
+erDiagram
+    alternatives {
+        int id PK
+        text name
+        text description
+    }
+    criteria {
+        int id PK
+        text name
+        text type
+        text description
+    }
+    evaluations {
+        int alternative_id FK
+        int criterion_id FK
+        real value
+    }
 
-evaluations  -->  alternatives : alternative_id:id
-evaluations  -->  criteria : criterion_id:id
-
+    evaluations }|..|| alternatives : alternative_id
+    evaluations }|..|| criteria : criterion_id
 ```
 
 ### Приклад заповнення бази даних тестовими даними
