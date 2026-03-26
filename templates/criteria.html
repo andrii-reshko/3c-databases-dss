@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+{{template "head" .}}
+<body>
+{{template "navbar"}}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Criteria</h2>
+        <a href="/criteria/new" class="btn btn-primary">Add New Criterion</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Description</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ range .criteria }}
+        <tr>
+            <td>{{ .Name }}</td>
+            <td>{{ .Type }}</td>
+            <td>{{ .Description }}</td>
+            <td>
+                <a href="/criteria/edit/{{ .ID }}" class="btn btn-sm btn-secondary">Edit</a>
+                <a href="/criteria/delete/{{ .ID }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        {{ else }}
+        <tr>
+            <td colspan="4">No criteria found.</td>
+        </tr>
+        {{ end }}
+        </tbody>
+    </table>
+</div>
+
+{{template "scripts"}}
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+{{template "head" .}}
+<body>
+{{template "navbar"}}
+
+<div class="container">
+    <h2>{{ .title }}</h2>
+
+    <form action="{{ .action }}" method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ .criterion.Name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="type" class="form-label">Type</label>
+            <select class="form-select" id="type" name="type">
+                <option value="maximize" {{ if eq .criterion.Type "maximize" }}selected{{ end }}>Max</option>
+                <option value="minimize" {{ if eq .criterion.Type "minimize" }}selected{{ end }}>Min</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3">{{ .criterion.Description }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/criteria" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+{{template "scripts"}}
+</body>
+</html>

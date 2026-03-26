@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+{{template "head" .}}
+<body>
+{{template "navbar"}}
+
+<div class="container">
+    <h2>Evaluation</h2>
+
+    <form action="/evaluations" method="post">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Alternative</th>
+                    {{ range .view.Criteria }}
+                    <th scope="col" class="text-center" title="{{ .Description }} ({{ .Type }})">{{ .Name }}</th>
+                    {{ end }}
+                </tr>
+                </thead>
+                <tbody>
+                {{ range .view.Alternatives }}
+                <tr>
+                    <th scope="row">{{ .Name }}</th>
+                    {{ $altID := .ID }}
+                    {{ range $.view.Criteria }}
+                    <td>
+                        <input type="number" step="any" class="form-control"
+                               name="eval-{{ $altID }}-{{ .ID }}"
+                               value="{{ index (index $.view.Values $altID) .ID }}">
+                    </td>
+                    {{ end }}
+                </tr>
+                {{ end }}
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Evaluations</button>
+    </form>
+</div>
+
+{{template "scripts"}}
+</body>
+</html>
