@@ -27,7 +27,7 @@ func (r *sqliteCriterionRepository) FindByID(id int64) (*entities.Criterion, err
 }
 
 func (r *sqliteCriterionRepository) Create(c *entities.Criterion) (int64, error) {
-	res, err := r.db.Exec("INSERT INTO criteria (name, type, description) VALUES (?, ?, ?)", c.Name, c.Type, c.Description)
+	res, err := r.db.Exec("INSERT INTO criteria (name, type, description, input_min, input_max, output_min, output_max) VALUES (?, ?, ?, ?, ?, ?, ?)", c.Name, c.Type, c.Description, c.InputMin, c.InputMax, c.OutputMin, c.OutputMax)
 	if err != nil {
 		return 0, err
 	}
@@ -35,7 +35,7 @@ func (r *sqliteCriterionRepository) Create(c *entities.Criterion) (int64, error)
 }
 
 func (r *sqliteCriterionRepository) Update(c *entities.Criterion) error {
-	_, err := r.db.Exec("UPDATE criteria SET name = ?, type = ?, description = ? WHERE id = ?", c.Name, c.Type, c.Description, c.ID)
+	_, err := r.db.Exec("UPDATE criteria SET name = ?, type = ?, description = ?, input_min = ?, input_max = ?, output_min = ?, output_max = ? WHERE id = ?", c.Name, c.Type, c.Description, c.InputMin, c.InputMax, c.OutputMin, c.OutputMax, c.ID)
 	return err
 }
 
