@@ -31,10 +31,16 @@ func (h *CriterionHandler) ListCriteria(c *gin.Context) {
 
 func (h *CriterionHandler) ShowCriterionForm(c *gin.Context) {
 	idStr := c.Param("id")
-	if idStr == "" { // New criterion form
+	if idStr == "" {
 		c.HTML(http.StatusOK, "criterion_form.html", gin.H{
 			"title":  "Add New Criterion",
 			"action": "/criteria/new",
+			"criterion": &entities.Criterion{
+				InputMin:  0,
+				InputMax:  1,
+				OutputMin: 0,
+				OutputMax: 1,
+			},
 		})
 		return
 	}
@@ -63,6 +69,10 @@ func (h *CriterionHandler) CreateCriterion(c *gin.Context) {
 	criterion.Name = c.PostForm("name")
 	criterion.Type = entities.CriterionType(c.PostForm("type"))
 	criterion.Description = c.PostForm("description")
+	criterion.InputMin, _ = strconv.ParseFloat(c.PostForm("input_min"), 64)
+	criterion.InputMax, _ = strconv.ParseFloat(c.PostForm("input_max"), 64)
+	criterion.OutputMin, _ = strconv.ParseFloat(c.PostForm("output_min"), 64)
+	criterion.OutputMax, _ = strconv.ParseFloat(c.PostForm("output_max"), 64)
 
 	if _, err := h.repo.Create(&criterion); err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})
@@ -78,6 +88,10 @@ func (h *CriterionHandler) UpdateCriterion(c *gin.Context) {
 	criterion.Name = c.PostForm("name")
 	criterion.Type = entities.CriterionType(c.PostForm("type"))
 	criterion.Description = c.PostForm("description")
+	criterion.InputMin, _ = strconv.ParseFloat(c.PostForm("input_min"), 64)
+	criterion.InputMax, _ = strconv.ParseFloat(c.PostForm("input_max"), 64)
+	criterion.OutputMin, _ = strconv.ParseFloat(c.PostForm("output_min"), 64)
+	criterion.OutputMax, _ = strconv.ParseFloat(c.PostForm("output_max"), 64)
 
 	if err := h.repo.Update(&criterion); err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})

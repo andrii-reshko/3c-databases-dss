@@ -25,7 +25,9 @@
             <td>{{ .Description }}</td>
             <td>
                 <a href="/alternatives/edit/{{ .ID }}" class="btn btn-sm btn-secondary">Edit</a>
-                <a href="/alternatives/delete/{{ .ID }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                <form action="/alternatives/delete/{{ .ID }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
             </td>
         </tr>
         {{ else }}

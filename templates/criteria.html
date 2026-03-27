@@ -16,6 +16,7 @@
             <th scope="col">Name</th>
             <th scope="col">Type</th>
             <th scope="col">Description</th>
+            <th scope="col">Range</th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
@@ -23,16 +24,19 @@
         {{ range .criteria }}
         <tr>
             <td>{{ .Name }}</td>
-            <td>{{ .Type }}</td>
+            <td>{{ if eq .Type "maximize" }}Max{{ else }}Min{{ end }}</td>
             <td>{{ .Description }}</td>
+            <td>{{ .InputMin }}..{{ .InputMax }}</td>
             <td>
                 <a href="/criteria/edit/{{ .ID }}" class="btn btn-sm btn-secondary">Edit</a>
-                <a href="/criteria/delete/{{ .ID }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                <form action="/criteria/delete/{{ .ID }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
             </td>
         </tr>
         {{ else }}
         <tr>
-            <td colspan="4">No criteria found.</td>
+            <td colspan="5">No criteria found.</td>
         </tr>
         {{ end }}
         </tbody>

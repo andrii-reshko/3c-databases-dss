@@ -15,9 +15,27 @@
         <div class="mb-3">
             <label for="type" class="form-label">Type</label>
             <select class="form-select" id="type" name="type">
-                <option value="maximize" {{ if eq .criterion.Type "maximize" }}selected{{ end }}>Max</option>
-                <option value="minimize" {{ if eq .criterion.Type "minimize" }}selected{{ end }}>Min</option>
+                <option value="maximize" {{ if eq .criterion.Type "maximize" }}selected{{ end }}>Max (higher is better)</option>
+                <option value="minimize" {{ if eq .criterion.Type "minimize" }}selected{{ end }}>Min (lower is better)</option>
             </select>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label for="input_min" class="form-label">Input Min</label>
+                <input type="number" step="any" class="form-control" id="input_min" name="input_min" value="{{ .criterion.InputMin }}">
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="input_max" class="form-label">Input Max</label>
+                <input type="number" step="any" class="form-control" id="input_max" name="input_max" value="{{ .criterion.InputMax }}">
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="output_min" class="form-label">Output Min</label>
+                <input type="number" step="any" class="form-control" id="output_min" name="output_min" value="{{ .criterion.OutputMin }}">
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="output_max" class="form-label">Output Max</label>
+                <input type="number" step="any" class="form-control" id="output_max" name="output_max" value="{{ .criterion.OutputMax }}">
+            </div>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>

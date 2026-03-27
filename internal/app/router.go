@@ -38,6 +38,7 @@ func SetupRouter(c *Container) *gin.Engine {
 		altRoutes.GET("/edit/:id", c.AlternativeHandler.ShowAlternativeForm)
 		altRoutes.POST("/edit/:id", c.AlternativeHandler.UpdateAlternative)
 		altRoutes.GET("/delete/:id", c.AlternativeHandler.DeleteAlternative)
+		altRoutes.POST("/delete/:id", c.AlternativeHandler.DeleteAlternative)
 	}
 
 	criteriaRoutes := router.Group("/criteria")
@@ -48,6 +49,7 @@ func SetupRouter(c *Container) *gin.Engine {
 		criteriaRoutes.GET("/edit/:id", c.CriterionHandler.ShowCriterionForm)
 		criteriaRoutes.POST("/edit/:id", c.CriterionHandler.UpdateCriterion)
 		criteriaRoutes.GET("/delete/:id", c.CriterionHandler.DeleteCriterion)
+		criteriaRoutes.POST("/delete/:id", c.CriterionHandler.DeleteCriterion)
 	}
 
 	return router
