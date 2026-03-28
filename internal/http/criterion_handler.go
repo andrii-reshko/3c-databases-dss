@@ -40,6 +40,7 @@ func (h *CriterionHandler) ShowCriterionForm(c *gin.Context) {
 				InputMax:  1,
 				OutputMin: 0,
 				OutputMax: 1,
+				Weight:    0,
 			},
 		})
 		return
@@ -73,6 +74,7 @@ func (h *CriterionHandler) CreateCriterion(c *gin.Context) {
 	criterion.InputMax, _ = strconv.ParseFloat(c.PostForm("input_max"), 64)
 	criterion.OutputMin, _ = strconv.ParseFloat(c.PostForm("output_min"), 64)
 	criterion.OutputMax, _ = strconv.ParseFloat(c.PostForm("output_max"), 64)
+	criterion.Weight, _ = strconv.ParseFloat(c.PostForm("weight"), 64)
 
 	if _, err := h.repo.Create(&criterion); err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})
@@ -92,6 +94,7 @@ func (h *CriterionHandler) UpdateCriterion(c *gin.Context) {
 	criterion.InputMax, _ = strconv.ParseFloat(c.PostForm("input_max"), 64)
 	criterion.OutputMin, _ = strconv.ParseFloat(c.PostForm("output_min"), 64)
 	criterion.OutputMax, _ = strconv.ParseFloat(c.PostForm("output_max"), 64)
+	criterion.Weight, _ = strconv.ParseFloat(c.PostForm("weight"), 64)
 
 	if err := h.repo.Update(&criterion); err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})

@@ -15,8 +15,8 @@
         <tr>
             <th scope="col">Name</th>
             <th scope="col">Type</th>
-            <th scope="col">Description</th>
             <th scope="col">Range</th>
+            <th scope="col">Weight</th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
@@ -25,8 +25,8 @@
         <tr>
             <td>{{ .Name }}</td>
             <td>{{ if eq .Type "maximize" }}Max{{ else }}Min{{ end }}</td>
-            <td>{{ .Description }}</td>
-            <td>{{ .InputMin }}..{{ .InputMax }}</td>
+            <td>In: {{ .InputMin }}→{{ .InputMax }} | Out: {{ .OutputMin }}→{{ .OutputMax }}</td>
+            <td>{{ .Weight }}</td>
             <td>
                 <a href="/criteria/edit/{{ .ID }}" class="btn btn-sm btn-secondary">Edit</a>
                 <form action="/criteria/delete/{{ .ID }}" method="POST" style="display:inline;">

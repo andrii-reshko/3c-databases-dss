@@ -20,21 +20,25 @@
             </select>
         </div>
         <div class="row">
-            <div class="col-md-3 mb-3">
+            <div class="col-md-2 mb-3">
                 <label for="input_min" class="form-label">Input Min</label>
                 <input type="number" step="any" class="form-control" id="input_min" name="input_min" value="{{ .criterion.InputMin }}">
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-2 mb-3">
                 <label for="input_max" class="form-label">Input Max</label>
                 <input type="number" step="any" class="form-control" id="input_max" name="input_max" value="{{ .criterion.InputMax }}">
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-2 mb-3">
                 <label for="output_min" class="form-label">Output Min</label>
                 <input type="number" step="any" class="form-control" id="output_min" name="output_min" value="{{ .criterion.OutputMin }}">
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-2 mb-3">
                 <label for="output_max" class="form-label">Output Max</label>
                 <input type="number" step="any" class="form-control" id="output_max" name="output_max" value="{{ .criterion.OutputMax }}">
+            </div>
+            <div class="col-md-2 mb-3">
+                <label for="weight" class="form-label">Weight</label>
+                <input type="number" step="any" class="form-control" id="weight" name="weight" value="{{ .criterion.Weight }}">
             </div>
         </div>
         <div class="mb-3">

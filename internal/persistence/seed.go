@@ -20,15 +20,15 @@ func SeedData(db *sqlx.DB) error {
 	}
 
 	criteria := []*entities.Criterion{
-		{ID: 1, Name: "Час публікації", Type: entities.TypeMinimize, Description: "Час від публікації, h", InputMin: 0, InputMax: 24, OutputMin: 1, OutputMax: 0},
-		{ID: 2, Name: "Відповідність експертизі", Type: entities.TypeMaximize, Description: "Збіг з навичками команди, %", InputMin: 0, InputMax: 100, OutputMin: 0, OutputMax: 1},
-		{ID: 3, Name: "Ставка", Type: entities.TypeMaximize, Description: "USD/h", InputMin: 10, InputMax: 60, OutputMin: 0, OutputMax: 1},
-		{ID: 4, Name: "Конкуренція", Type: entities.TypeMinimize, Description: "Кількість поданих заявок", InputMin: 0, InputMax: 50, OutputMin: 1, OutputMax: 0},
-		{ID: 5, Name: "Активні інтерв'ю", Type: entities.TypeMinimize, Description: "Кількість фрилансерів на інтерв'ю", InputMin: 0, InputMax: 5, OutputMin: 1, OutputMax: 0},
-		{ID: 6, Name: "Відсоток найму", Type: entities.TypeMaximize, Description: "Кількість закритих контрактів, %", InputMin: 0, InputMax: 100, OutputMin: 0, OutputMax: 1},
-		{ID: 7, Name: "Середня виплачена ставка", Type: entities.TypeMaximize, Description: "Середня ставка клієнта, USD/h", InputMin: 10, InputMax: 60, OutputMin: 0, OutputMax: 1},
-		{ID: 8, Name: "Негативні відгуки", Type: entities.TypeMinimize, Description: "Відсоток негативних відгуків", InputMin: 0, InputMax: 100, OutputMin: 1, OutputMax: 0},
-		{ID: 9, Name: "Тривалість проєкту", Type: entities.TypeMaximize, Description: "Тривалість у місяцях", InputMin: 1, InputMax: 12, OutputMin: 0, OutputMax: 1},
+		{ID: 1, Name: "Час публікації", Type: entities.TypeMinimize, Description: "Час від публікації, h", InputMin: 0, InputMax: 24, OutputMin: 1, OutputMax: 0, Weight: 0.20},
+		{ID: 2, Name: "Відповідність експертизі", Type: entities.TypeMaximize, Description: "Збіг з навичками команди, %", InputMin: 0, InputMax: 100, OutputMin: 0, OutputMax: 1, Weight: 0.12},
+		{ID: 3, Name: "Ставка", Type: entities.TypeMaximize, Description: "USD/h", InputMin: 10, InputMax: 60, OutputMin: 0, OutputMax: 1, Weight: 0.10},
+		{ID: 4, Name: "Конкуренція", Type: entities.TypeMinimize, Description: "Кількість поданих заявок", InputMin: 0, InputMax: 50, OutputMin: 1, OutputMax: 0, Weight: 0.15},
+		{ID: 5, Name: "Активні інтерв'ю", Type: entities.TypeMinimize, Description: "Кількість фрилансерів на інтерв'ю", InputMin: 0, InputMax: 5, OutputMin: 1, OutputMax: 0, Weight: 0.12},
+		{ID: 6, Name: "Відсоток найму", Type: entities.TypeMaximize, Description: "Кількість закритих контрактів, %", InputMin: 0, InputMax: 100, OutputMin: 0, OutputMax: 1, Weight: 0.10},
+		{ID: 7, Name: "Середня виплачена ставка", Type: entities.TypeMaximize, Description: "Середня ставка клієнта, USD/h", InputMin: 10, InputMax: 60, OutputMin: 0, OutputMax: 1, Weight: 0.08},
+		{ID: 8, Name: "Негативні відгуки", Type: entities.TypeMinimize, Description: "Відсоток негативних відгуків", InputMin: 0, InputMax: 100, OutputMin: 1, OutputMax: 0, Weight: 0.08},
+		{ID: 9, Name: "Тривалість проєкту", Type: entities.TypeMaximize, Description: "Тривалість у місяцях", InputMin: 1, InputMax: 12, OutputMin: 0, OutputMax: 1, Weight: 0.05},
 	}
 
 	for _, alt := range alternatives {
@@ -40,8 +40,8 @@ func SeedData(db *sqlx.DB) error {
 	}
 
 	for _, c := range criteria {
-		_, err := db.Exec("INSERT INTO criteria (name, type, description, input_min, input_max, output_min, output_max) VALUES (?, ?, ?, ?, ?, ?, ?)",
-			c.Name, c.Type, c.Description, c.InputMin, c.InputMax, c.OutputMin, c.OutputMax)
+		_, err := db.Exec("INSERT INTO criteria (name, type, description, input_min, input_max, output_min, output_max, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+			c.Name, c.Type, c.Description, c.InputMin, c.InputMax, c.OutputMin, c.OutputMax, c.Weight)
 		if err != nil {
 			return err
 		}

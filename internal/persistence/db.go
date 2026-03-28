@@ -30,7 +30,8 @@ func Migrate(db *sqlx.DB) error {
         input_min REAL NOT NULL DEFAULT 0,
         input_max REAL NOT NULL DEFAULT 1,
         output_min REAL NOT NULL DEFAULT 0,
-        output_max REAL NOT NULL DEFAULT 1
+        output_max REAL NOT NULL DEFAULT 1,
+        weight REAL NOT NULL DEFAULT 0
     );`
 
 	evaluationSchema := `

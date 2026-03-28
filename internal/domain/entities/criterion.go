@@ -16,6 +16,7 @@ type Criterion struct {
 	InputMax    float64       `db:"input_max"`
 	OutputMin   float64       `db:"output_min"`
 	OutputMax   float64       `db:"output_max"`
+	Weight      float64       `db:"weight"`
 }
 
 func NewCriterion(name string, cType CriterionType, description string) *Criterion {
