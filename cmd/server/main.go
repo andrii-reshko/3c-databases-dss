@@ -10,7 +10,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create container: %v", err)
 	}
-	defer container.DB.Close()
+	defer container.Close()
 
 	router := app.SetupRouter(container)
 
