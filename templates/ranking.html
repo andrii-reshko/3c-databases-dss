@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+{{template "head" .}}
+<body>
+{{template "navbar"}}
+
+<div class="container">
+
+    <div class="d-flex flex-row align-items-center justify-content-between mb-3">
+        <h2 class="mb-0 me-3">Ranking Results</h2>
+        <form action="/ranking" method="get">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <label for="strategy" class="form-label mb-0"><strong>Strategy:</strong></label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" name="strategy" onchange="this.form.submit()">
+                        <option value="additive" {{ if eq .view.Strategy "additive" }}selected{{ end }}>Additive</option>
+                        <option value="multiplicative" {{ if eq .view.Strategy "multiplicative" }}selected{{ end }}>Multiplicative</option>
+                        <option value="minimax" {{ if eq .view.Strategy "minimax" }}selected{{ end }}>Minimax</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {{ if .view.Scores }}
+
+    {{ range $i, $score := .view.Scores }}
+    <div class="mb-3 border-bottom pb-2">
+        <div class="row" data-bs-toggle="collapse" data-bs-target="#alt-{{ $i }}">
+            <div class="col-10">
+                <div>
+                    <span>{{ add $i 1 }}. </span>
+                    <strong>{{ $score.Alternative.Name }}</strong>
+                </div>
+                <div>
+                    <small class="text-muted">{{ $score.Alternative.Description }}</small>
+                </div>
+            </div>
+            <div class="col-2 text-end">
+                <span>{{ printf "%.4f" $score.Score }}</span>
+            </div>
+            <div class="col-12 py-2">
+                <div class="progress" style="height: 3px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $score.RelativeScore }}%;" aria-valuenow="{{ $score.RelativeScore }}"></div>
+                </div>
+                <div class="collapse" id="alt-{{ $i }}">
+                    <div class="row py-2">
+                    {{ range $j, $val := $score.CriteriaScoresExt }}
+                        <div class="col-9">
+                            {{ add $j 1 }} {{ $val.CriterionName }}
+                        </div>
+                        <div class="col-3 text-end">
+                            <div class="text-muted">{{ printf "%.4f" $val.Score }}</div>
+                        </div>
+                    {{ end }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+    {{ else }}
+    <div class="alert alert-info">
+        No evaluation data available. Please <a href="/">add evaluations</a> first.
+    </div>
+    {{ end }}
+</div>
+
+{{template "scripts"}}
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+{{template "head" .}}
+<body>
+{{template "navbar"}}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Criteria</h2>
+        <a href="/criteria/new" class="btn btn-outline-primary">Add New Criterion</a>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col" colspan="2">Scoring</th>
+            <th scope="col">Weight</th>
+            <th scope="col" class="text-end">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ range .criteria }}
+        <tr>
+            <td>{{ .Name }}</td>
+            <td>{{ if eq .Type "maximize" }}Max{{ else }}Min{{ end }}</td>
+            <td>
+                {{ .InputMin }}–{{ .InputMax }}
+            </td>
+            <td>
+                {{ .OutputMin }}–{{ .OutputMax }}
+            </td>
+            <td>{{ .Weight }}</td>
+            <td class="text-end">
+                <a href="/criteria/edit/{{ .ID }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <form action="/criteria/delete/{{ .ID }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {{ else }}
+        <tr>
+            <td colspan="5">No criteria found.</td>
+        </tr>
+        {{ end }}
+        </tbody>
+    </table>
+</div>
+
+{{template "scripts"}}
+</body>
+</html>
