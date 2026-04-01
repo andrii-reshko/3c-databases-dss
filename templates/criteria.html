@@ -14,7 +14,6 @@
         <thead>
         <tr>
             <th scope="col">Name</th>
-            <th scope="col">Type</th>
             <th scope="col" colspan="2">Scoring</th>
             <th scope="col">Weight</th>
             <th scope="col" class="text-end">Actions</th>
@@ -24,7 +23,6 @@
         {{ range .criteria }}
         <tr>
             <td>{{ .Name }}</td>
-            <td>{{ if eq .Type "maximize" }}Max{{ else }}Min{{ end }}</td>
             <td>
                 {{ .InputMin }}–{{ .InputMax }}
             </td>

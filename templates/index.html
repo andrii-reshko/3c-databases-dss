@@ -12,22 +12,26 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">Alternative</th>
+                    <th scope="col"></th>
                     {{ range .view.Criteria }}
-                    <th scope="col" class="text-center" title="Weight: {{ .Weight }} | {{ .Description }} ({{ .Type }})">{{ .Name }}</th>
+                    <th scope="col" class="text-center align-top" title="Weight: {{ .Weight }} | {{ .Description }}">
+                        <small class="fw-normal">{{ .Name }}</small>
+                    </th>
                     {{ end }}
                 </tr>
                 </thead>
                 <tbody>
                 {{ range .view.Alternatives }}
                 <tr>
-                    <th scope="row">{{ .Name }}</th>
+                    <th class="fw-normal" scope="row">{{ .Name }}</th>
                     {{ $altID := .ID }}
                     {{ range $.view.Criteria }}
-                    <td class="align-middle">
+                    <td class="align-middle data-col">
                         <input type="number" step="any" class="form-control form-control-sm"
                                name="eval-{{ $altID }}-{{ .ID }}"
-                               value="{{ index (index $.view.Values $altID) .ID }}">
+                               value="{{ index (index $.view.Values $altID) .ID }}"
+                               style="width: 70px;"
+                        >
                     </td>
                     {{ end }}
                 </tr>
@@ -39,7 +43,6 @@
         <a href="/ranking" class="btn btn-success">View Ranking</a>
     </form>
 </div>
-
 {{template "scripts"}}
 </body>
 </html>

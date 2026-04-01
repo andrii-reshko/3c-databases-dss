@@ -18,9 +18,8 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          1,
 			Name:        "Час публікації",
-			Type:        entities.TypeMinimize,
 			Description: "Час від публікації, h",
-			InputMin:    0,
+			InputMin:    1,
 			InputMax:    24,
 			OutputMin:   1,
 			OutputMax:   0,
@@ -29,7 +28,6 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          2,
 			Name:        "Відповідність експертизі",
-			Type:        entities.TypeMaximize,
 			Description: "Збіг з навичками команди, %",
 			InputMin:    0,
 			InputMax:    100,
@@ -40,7 +38,6 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          3,
 			Name:        "Ставка",
-			Type:        entities.TypeMaximize,
 			Description: "USD/h",
 			InputMin:    10,
 			InputMax:    60,
@@ -51,7 +48,6 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          4,
 			Name:        "Конкуренція",
-			Type:        entities.TypeMinimize,
 			Description: "Кількість поданих заявок",
 			InputMin:    0,
 			InputMax:    50,
@@ -62,7 +58,6 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          5,
 			Name:        "Активні інтерв'ю",
-			Type:        entities.TypeMinimize,
 			Description: "Кількість фрилансерів на інтерв'ю",
 			InputMin:    0,
 			InputMax:    5,
@@ -73,7 +68,6 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          6,
 			Name:        "Відсоток найму",
-			Type:        entities.TypeMaximize,
 			Description: "Кількість закритих контрактів, %",
 			InputMin:    0,
 			InputMax:    100,
@@ -84,7 +78,6 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          7,
 			Name:        "Середня виплачена ставка",
-			Type:        entities.TypeMaximize,
 			Description: "Середня ставка клієнта, USD/h",
 			InputMin:    10,
 			InputMax:    60,
@@ -95,7 +88,6 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          8,
 			Name:        "Негативні відгуки",
-			Type:        entities.TypeMinimize,
 			Description: "Відсоток негативних відгуків",
 			InputMin:    0,
 			InputMax:    100,
@@ -106,7 +98,6 @@ func SeedData(alt repositories.AlternativeRepository, crit repositories.Criterio
 		{
 			ID:          9,
 			Name:        "Тривалість проєкту",
-			Type:        entities.TypeMaximize,
 			Description: "Тривалість у місяцях",
 			InputMin:    1,
 			InputMax:    12,

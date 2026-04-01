@@ -25,7 +25,6 @@ func Migrate(db *sqlx.DB) error {
     CREATE TABLE IF NOT EXISTS criteria (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        type TEXT NOT NULL CHECK(type IN ('maximize', 'minimize')),
         description TEXT,
         input_min REAL NOT NULL DEFAULT 0,
         input_max REAL NOT NULL DEFAULT 1,

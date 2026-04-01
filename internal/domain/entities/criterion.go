@@ -1,56 +1,32 @@
 package entities
 
-type CriterionType string
-
-const (
-	TypeMaximize CriterionType = "maximize"
-	TypeMinimize CriterionType = "minimize"
-)
-
 type Criterion struct {
-	ID          int64         `db:"id"`
-	Name        string        `db:"name"`
-	Type        CriterionType `db:"type"`
-	Description string        `db:"description"`
-	InputMin    float64       `db:"input_min"`
-	InputMax    float64       `db:"input_max"`
-	OutputMin   float64       `db:"output_min"`
-	OutputMax   float64       `db:"output_max"`
-	Weight      float64       `db:"weight"`
-}
-
-func NewCriterion(name string, cType CriterionType, description string) *Criterion {
-	return &Criterion{
-		Name:        name,
-		Description: description,
-		Type:        cType,
-		InputMin:    0,
-		InputMax:    1,
-		OutputMin:   0,
-		OutputMax:   1,
-		Weight:      0,
-	}
+	ID          int64   `db:"id"`
+	Name        string  `db:"name"`
+	Description string  `db:"description"`
+	InputMin    float64 `db:"input_min"`
+	InputMax    float64 `db:"input_max"`
+	OutputMin   float64 `db:"output_min"`
+	OutputMax   float64 `db:"output_max"`
+	Weight      float64 `db:"weight"`
 }
 
 func (c *Criterion) Normalize(value float64) float64 {
 	if c.InputMax == c.InputMin {
-		if c.Type == TypeMinimize {
+		// OutputMax < OutputMin -> minimization
+		if c.OutputMax < c.OutputMin {
 			if value < c.InputMin {
-				return c.OutputMax
+				return c.OutputMin
 			}
-			return c.OutputMin
+			return c.OutputMax
 		}
 		if value > c.InputMin {
-			return c.OutputMax
+			return c.OutputMax // -> maximization
 		}
 		return c.OutputMin
 	}
 
 	t := clamp(norm(value, c.InputMin, c.InputMax), 0, 1)
-
-	if c.Type == TypeMinimize {
-		return lerp(t, c.OutputMax, c.OutputMin)
-	}
 
 	return lerp(t, c.OutputMin, c.OutputMax)
 }
