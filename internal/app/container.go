@@ -54,3 +54,10 @@ func NewContainer() (*Container, error) {
 		RankingHandler:     http.NewRankingHandler(altRepo, critRepo, evalRepo),
 	}, nil
 }
+
+func (c *Container) Close() {
+	err := c.DB.Close()
+	if err != nil {
+		log.Fatalf("Error closing DB: %v", err)
+	}
+}
