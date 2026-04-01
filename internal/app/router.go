@@ -23,12 +23,23 @@ func SetupRouter(c *Container) *gin.Engine {
 		filepath.Join(getwd, "templates/alternative_form.html"),
 		filepath.Join(getwd, "templates/criterion_form.html"),
 		filepath.Join(getwd, "templates/error.html"),
+		filepath.Join(getwd, "templates/ranking.html"),
 	}
-	tmpl := template.Must(template.ParseFiles(files...))
+
+	tmpl := template.New("").Funcs(template.FuncMap{
+		"add": func(a, b int) int {
+			return a + b
+		},
+	})
+	tmpl, err := tmpl.ParseFiles(files...)
+	if err != nil {
+		panic(err)
+	}
 	router.SetHTMLTemplate(tmpl)
 
 	router.GET("/", c.EvaluationHandler.ShowMatrix)
 	router.POST("/evaluations", c.EvaluationHandler.UpdateMatrix)
+	router.GET("/ranking", c.RankingHandler.ShowRanking)
 
 	altRoutes := router.Group("/alternatives")
 	{

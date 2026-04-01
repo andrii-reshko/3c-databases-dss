@@ -16,7 +16,7 @@ func NewCriterionRepository(db *sqlx.DB) CriterionRepository {
 
 func (r *sqliteCriterionRepository) FindAll() ([]*entities.Criterion, error) {
 	var criteria []*entities.Criterion
-	err := r.db.Select(&criteria, "SELECT * FROM criteria ORDER BY id")
+	err := r.db.Select(&criteria, "SELECT * FROM criteria ORDER BY weight DESC")
 	return criteria, err
 }
 

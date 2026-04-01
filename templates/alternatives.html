@@ -7,15 +7,15 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Alternatives</h2>
-        <a href="/alternatives/new" class="btn btn-primary">Add New Alternative</a>
+        <a href="/alternatives/new" class="btn btn-outline-primary">Add New Alternative</a>
     </div>
 
-    <table class="table table-striped">
+    <table class="table">
         <thead>
         <tr>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
-            <th scope="col">Actions</th>
+            <th scope="col" class="text-end">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -23,10 +23,10 @@
         <tr>
             <td>{{ .Name }}</td>
             <td>{{ .Description }}</td>
-            <td>
-                <a href="/alternatives/edit/{{ .ID }}" class="btn btn-sm btn-secondary">Edit</a>
+            <td class="text-end">
+                <a href="/alternatives/edit/{{ .ID }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 <form action="/alternatives/delete/{{ .ID }}" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
                 </form>
             </td>
         </tr>

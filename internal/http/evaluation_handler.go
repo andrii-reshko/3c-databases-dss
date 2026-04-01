@@ -52,8 +52,8 @@ func (h *EvaluationHandler) ShowMatrix(c *gin.Context) {
 		evalMap[alt.ID] = make(map[int64]float64)
 	}
 	for _, e := range evaluations {
-		if _, ok := evalMap[e.AlternativeID]; ok {
-			evalMap[e.AlternativeID][e.CriterionID] = e.Value
+		if row, ok := evalMap[e.AlternativeID]; ok {
+			row[e.CriterionID] = e.Value
 		}
 	}
 
@@ -80,12 +80,11 @@ func (h *EvaluationHandler) UpdateMatrix(c *gin.Context) {
 
 		var altID, critID int64
 		if _, err := fmt.Sscanf(key, "eval-%d-%d", &altID, &critID); err != nil {
-			continue // Not an evaluation field
+			continue
 		}
 
 		value, err := strconv.ParseFloat(values[0], 64)
 		if err != nil {
-			// Default to 0 if value is invalid
 			value = 0
 		}
 
@@ -101,5 +100,5 @@ func (h *EvaluationHandler) UpdateMatrix(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusFound, "/")
+	c.Redirect(http.StatusFound, "/ranking")
 }
