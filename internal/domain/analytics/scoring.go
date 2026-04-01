@@ -101,7 +101,7 @@ func (s *ScoringService) Rank(
 func (s *ScoringService) buildNormalizedArrays(altID int64, criteria []*entities.Criterion, evaluations map[int64]map[int64]float64) ([]float64, []float64) {
 	x := make([]float64, len(criteria))
 	w := make([]float64, len(criteria))
-
+	var wsum float64
 	for i, crit := range criteria {
 		row := evaluations[altID]
 		if row == nil {
@@ -113,8 +113,11 @@ func (s *ScoringService) buildNormalizedArrays(altID int64, criteria []*entities
 		if w[i] <= 0 {
 			w[i] = 1.0
 		}
+		wsum += w[i]
 	}
-
+	for i, _ := range w {
+		w[i] /= wsum
+	}
 	return x, w
 }
 
