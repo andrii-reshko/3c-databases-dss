@@ -28,6 +28,7 @@ func NewCriterion(name string, cType CriterionType, description string) *Criteri
 		InputMax:    1,
 		OutputMin:   0,
 		OutputMax:   1,
+		Weight:      0,
 	}
 }
 
