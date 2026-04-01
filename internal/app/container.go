@@ -19,6 +19,7 @@ type Container struct {
 	AlternativeHandler *http.AlternativeHandler
 	CriterionHandler   *http.CriterionHandler
 	EvaluationHandler  *http.EvaluationHandler
+	RankingHandler     *http.RankingHandler
 }
 
 func NewContainer() (*Container, error) {
@@ -33,13 +34,14 @@ func NewContainer() (*Container, error) {
 	if err := persistence.Migrate(db); err != nil {
 		return nil, err
 	}
-	if err := persistence.SeedData(db); err != nil {
-		return nil, err
-	}
 
 	altRepo := repositories.NewAlternativeRepository(db)
 	critRepo := repositories.NewCriterionRepository(db)
 	evalRepo := repositories.NewEvaluationRepository(db)
+
+	if err := persistence.SeedData(altRepo, critRepo, evalRepo); err != nil {
+		return nil, err
+	}
 
 	return &Container{
 		DB:                 db,
@@ -49,5 +51,6 @@ func NewContainer() (*Container, error) {
 		AlternativeHandler: http.NewAlternativeHandler(altRepo),
 		CriterionHandler:   http.NewCriterionHandler(critRepo),
 		EvaluationHandler:  http.NewEvaluationHandler(altRepo, critRepo, evalRepo),
+		RankingHandler:     http.NewRankingHandler(altRepo, critRepo, evalRepo),
 	}, nil
 }
