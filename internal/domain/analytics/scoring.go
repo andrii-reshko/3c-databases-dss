@@ -7,14 +7,10 @@ import (
 )
 
 type AlternativeScore struct {
-	Alternative       *entities.Alternative
-	Score             float64
-	RelativeScore     float64
-	CriteriaScores    map[int64]float64
-	CriteriaScoresExt []struct {
-		CriterionName string
-		Score         float64
-	}
+	Alternative    *entities.Alternative
+	Score          float64
+	RelativeScore  float64
+	CriteriaScores map[int64]float64
 }
 
 type ScoringService struct{}
@@ -35,20 +31,6 @@ func (s *ScoringService) Rank(
 		x, w := s.buildNormalizedArrays(alt.ID, criteria, evaluations)
 		criteriaScores := s.buildCriteriaScores(criteria, x, w)
 
-		criteriaScoresExt := make([]struct {
-			CriterionName string
-			Score         float64
-		}, len(criteria))
-		for i, crit := range criteria {
-			criteriaScoresExt[i] = struct {
-				CriterionName string
-				Score         float64
-			}{
-				CriterionName: crit.Name,
-				Score:         criteriaScores[crit.ID],
-			}
-		}
-
 		score, err := strategy.Eval(x, w)
 		if err != nil {
 			log.Println(err)
@@ -56,10 +38,9 @@ func (s *ScoringService) Rank(
 		}
 
 		intermediate = append(intermediate, &AlternativeScore{
-			Alternative:       alt,
-			Score:             score,
-			CriteriaScores:    criteriaScores,
-			CriteriaScoresExt: criteriaScoresExt,
+			Alternative:    alt,
+			Score:          score,
+			CriteriaScores: criteriaScores,
 		})
 	}
 
@@ -79,11 +60,10 @@ func (s *ScoringService) Rank(
 			rel = 0
 		}
 		scores = append(scores, &AlternativeScore{
-			Alternative:       r.Alternative,
-			Score:             r.Score,
-			CriteriaScores:    r.CriteriaScores,
-			RelativeScore:     rel * 100,
-			CriteriaScoresExt: r.CriteriaScoresExt,
+			Alternative:    r.Alternative,
+			Score:          r.Score,
+			CriteriaScores: r.CriteriaScores,
+			RelativeScore:  rel * 100,
 		})
 	}
 

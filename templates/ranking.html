@@ -47,12 +47,12 @@
                 </div>
                 <div class="collapse" id="alt-{{ $i }}">
                     <div class="row py-2">
-                    {{ range $j, $val := $score.CriteriaScoresExt }}
+                    {{ range $j, $crit := $.view.Criteria }}
                         <div class="col-9">
-                            {{ add $j 1 }} {{ $val.CriterionName }}
+                            {{ add $j 1 }} {{ $crit.Name }}
                         </div>
                         <div class="col-3 text-end">
-                            <div class="text-muted">{{ printf "%.4f" $val.Score }}</div>
+                            <div class="text-muted">{{ printf "%.4f" (index $score.CriteriaScores $crit.ID) }}</div>
                         </div>
                     {{ end }}
                     </div>
