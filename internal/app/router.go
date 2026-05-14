@@ -26,6 +26,7 @@ func SetupRouter(c *Container) *gin.Engine {
 		filepath.Join(getwd, "templates/error.html"),
 		filepath.Join(getwd, "templates/ranking.html"),
 		filepath.Join(getwd, "templates/rules.html"),
+		filepath.Join(getwd, "templates/rule_form.html"),
 	}
 
 	tmpl := template.New("").Funcs(template.FuncMap{
@@ -42,9 +43,16 @@ func SetupRouter(c *Container) *gin.Engine {
 	router.GET("/", c.EvaluationHandler.ShowMatrix)
 	router.POST("/evaluations", c.EvaluationHandler.UpdateMatrix)
 	router.GET("/ranking", c.RankingHandler.ShowRanking)
-	router.GET("/rules", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "rules.html", gin.H{"title": "Expert Logic"})
-	})
+
+	rulesRoutes := router.Group("/rules")
+	{
+		rulesRoutes.GET("/", c.RuleHandler.ShowRules)
+		rulesRoutes.GET("/new", c.RuleHandler.ShowRuleForm)
+		rulesRoutes.POST("/new", c.RuleHandler.CreateRule)
+		rulesRoutes.GET("/edit/:id", c.RuleHandler.ShowRuleForm)
+		rulesRoutes.POST("/edit/:id", c.RuleHandler.UpdateRule)
+		rulesRoutes.POST("/delete/:id", c.RuleHandler.DeleteRule)
+	}
 
 	notImplemented := func(ctx *gin.Context) {
 		ctx.HTML(http.StatusServiceUnavailable, "error.html", gin.H{

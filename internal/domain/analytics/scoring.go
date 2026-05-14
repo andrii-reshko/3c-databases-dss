@@ -11,6 +11,7 @@ type AlternativeScore struct {
 	Score          float64
 	RelativeScore  float64
 	CriteriaScores map[int64]float64
+	AppliedRules   []string
 }
 
 type ScoringService struct{}
@@ -24,10 +25,18 @@ func (s *ScoringService) Rank(
 	criteria []*entities.Criterion,
 	evaluations map[int64]map[int64]float64,
 	strategy ScoringStrategy,
+	rules []*entities.Rule,
 ) ([]*AlternativeScore, error) {
+	ruleEngine := NewRuleEngine()
+	ruleCtx := ruleEngine.Evaluate(alternatives, evaluations, rules)
+
 	intermediate := make([]*AlternativeScore, 0, len(alternatives))
 
 	for _, alt := range alternatives {
+		if ruleCtx.Excluded[alt.ID] {
+			continue // Skip alternatives that failed threshold rules
+		}
+
 		x, w := s.buildNormalizedArrays(alt.ID, criteria, evaluations)
 		criteriaScores := s.buildCriteriaScores(criteria, x, w)
 
@@ -37,10 +46,14 @@ func (s *ScoringService) Rank(
 			score = 0
 		}
 
+		// Apply final score modifiers from IF-THEN rules
+		score *= ruleCtx.Multipliers[alt.ID]
+
 		intermediate = append(intermediate, &AlternativeScore{
 			Alternative:    alt,
 			Score:          score,
 			CriteriaScores: criteriaScores,
+			AppliedRules:   ruleCtx.AppliedRules[alt.ID],
 		})
 	}
 
@@ -64,6 +77,7 @@ func (s *ScoringService) Rank(
 			Score:          r.Score,
 			CriteriaScores: r.CriteriaScores,
 			RelativeScore:  rel * 100,
+			AppliedRules:   r.AppliedRules,
 		})
 	}
 

@@ -7,80 +7,50 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Expert Logic (Rules)</h2>
+        <a href="/rules/new" class="btn btn-outline-primary">Add New Rule</a>
     </div>
     
-    <div class="row">
-        <!-- Thresholds Section -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong>Thresholds (Cut-off values)</strong>
-                    <button class="btn btn-sm btn-outline-primary" disabled>Add</button>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted small">Set minimum or maximum acceptable values for criteria.</p>
-                    <table class="table table-sm">
-                        <thead>
-                        <tr>
-                            <th>Criterion</th>
-                            <th>Condition</th>
-                            <th>Value</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Placeholder rows for UI -->
-                        <tr>
-                            <td>Price</td>
-                            <td>&le;</td>
-                            <td>1000</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Quality</td>
-                            <td>&ge;</td>
-                            <td>4.0</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <p class="text-muted mb-4">Create conditional logic to adjust scores based on specific situations or completely filter out unacceptable alternatives.</p>
 
-        <!-- IF-THEN Rules Section -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong>IF-THEN Rules</strong>
-                    <button class="btn btn-sm btn-outline-primary" disabled>Add Rule</button>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted small">Create conditional logic to adjust scores based on specific situations.</p>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>IF</strong> <em>Price</em> &gt; 800 <strong>AND</strong> <em>Quality</em> &lt; 3.0 <br>
-                                <strong>THEN</strong> Set status to <em>Rejected</em>
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>IF</strong> <em>Brand</em> == "Premium" <br>
-                                <strong>THEN</strong> Increase <em>Overall Score</em> by 5%
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Rule Name</th>
+            <th scope="col">Condition (IF)</th>
+            <th scope="col">Action (THEN)</th>
+            <th scope="col" class="text-end">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ range .view.Rules }}
+        <tr>
+            <td>{{ .Name }}</td>
+            <td>
+                {{ $crit := index $.view.CritMap .CriterionID }}
+                <strong>{{ if $crit }}{{ $crit.Name }}{{ else }}Unknown{{ end }}</strong>
+                {{ .Operator }} {{ .Value }}
+            </td>
+            <td>
+                {{ if eq .ActionType "exclude" }}
+                    <span class="badge bg-danger">Exclude Alternative</span>
+                {{ else }}
+                    <span class="badge bg-warning text-dark">Modify Score by {{ .ActionValue }}</span>
+                {{ end }}
+            </td>
+            <td class="text-end">
+                <a href="/rules/edit/{{ .ID }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <form action="/rules/delete/{{ .ID }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {{ else }}
+        <tr>
+            <td colspan="4">No rules found.</td>
+        </tr>
+        {{ end }}
+        </tbody>
+    </table>
 </div>
 
 {{template "scripts"}}

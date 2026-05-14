@@ -55,6 +55,18 @@
                         </div>
                         {{ end }}
                     </div>
+                    {{ if $score.AppliedRules }}
+                    <div class="row py-2 mt-2 bg-light rounded">
+                        <div class="col-12">
+                            <small class="text-warning text-dark fw-bold">Applied Logic Rules:</small>
+                            <ul class="mb-0 small text-muted">
+                                {{ range $score.AppliedRules }}
+                                <li>{{ . }}</li>
+                                {{ end }}
+                            </ul>
+                        </div>
+                    </div>
+                    {{ end }}
                 </div>
             </div>
         </div>

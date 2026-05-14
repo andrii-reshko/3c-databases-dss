@@ -16,12 +16,14 @@ type Container struct {
 	DB                 *sqlx.DB
 	AlternativeRepo    repositories.AlternativeRepository
 	CriterionRepo      repositories.CriterionRepository
+	RuleRepo           repositories.RuleRepository
 	EvaluationRepo     repositories.EvaluationRepository
 	AlternativeHandler *http.AlternativeHandler
 	CriterionHandler   *http.CriterionHandler
 	EvaluationHandler  *http.EvaluationHandler
 	RankingHandler     *http.RankingHandler
 	ImportHandler      *http.ImportHandler
+	RuleHandler        *http.RuleHandler
 }
 
 func NewContainer() (*Container, error) {
@@ -40,6 +42,7 @@ func NewContainer() (*Container, error) {
 	altRepo := repositories.NewAlternativeRepository(db)
 	critRepo := repositories.NewCriterionRepository(db)
 	evalRepo := repositories.NewEvaluationRepository(db)
+	ruleRepo := repositories.NewRuleRepository(db)
 
 	if err := persistence.SeedData(altRepo, critRepo, evalRepo); err != nil {
 		return nil, err
@@ -52,11 +55,13 @@ func NewContainer() (*Container, error) {
 		AlternativeRepo:    altRepo,
 		CriterionRepo:      critRepo,
 		EvaluationRepo:     evalRepo,
+		RuleRepo:           ruleRepo,
 		AlternativeHandler: http.NewAlternativeHandler(altRepo),
 		CriterionHandler:   http.NewCriterionHandler(critRepo),
 		EvaluationHandler:  http.NewEvaluationHandler(altRepo, critRepo, evalRepo),
-		RankingHandler:     http.NewRankingHandler(altRepo, critRepo, evalRepo),
+		RankingHandler:     http.NewRankingHandler(altRepo, critRepo, evalRepo, ruleRepo),
 		ImportHandler:      http.NewImportHandler(critRepo, votingSvc),
+		RuleHandler:        http.NewRuleHandler(ruleRepo, critRepo),
 	}, nil
 }
 

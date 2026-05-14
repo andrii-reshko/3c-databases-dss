@@ -13,13 +13,15 @@ type RankingHandler struct {
 	altRepo  repositories.AlternativeRepository
 	critRepo repositories.CriterionRepository
 	evalRepo repositories.EvaluationRepository
+	ruleRepo repositories.RuleRepository
 }
 
-func NewRankingHandler(altRepo repositories.AlternativeRepository, critRepo repositories.CriterionRepository, evalRepo repositories.EvaluationRepository) *RankingHandler {
+func NewRankingHandler(altRepo repositories.AlternativeRepository, critRepo repositories.CriterionRepository, evalRepo repositories.EvaluationRepository, ruleRepo repositories.RuleRepository) *RankingHandler {
 	return &RankingHandler{
 		altRepo:  altRepo,
 		critRepo: critRepo,
 		evalRepo: evalRepo,
+		ruleRepo: ruleRepo,
 	}
 }
 
@@ -63,7 +65,14 @@ func (h *RankingHandler) ShowRanking(c *gin.Context) {
 
 	scoringService := analytics.NewScoringService()
 	strategy := scoringService.GetStrategy(strategyName)
-	scores, err := scoringService.Rank(alternatives, criteria, evalMap, strategy)
+
+	rules, err := h.ruleRepo.FindAll()
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})
+		return
+	}
+
+	scores, err := scoringService.Rank(alternatives, criteria, evalMap, strategy, rules)
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})
 		return

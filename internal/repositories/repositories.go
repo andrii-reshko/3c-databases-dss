@@ -18,6 +18,14 @@ type CriterionRepository interface {
 	Delete(id int64) error
 }
 
+type RuleRepository interface {
+	FindAll() ([]*entities.Rule, error)
+	FindByID(id int64) (*entities.Rule, error)
+	Create(rule *entities.Rule) (int64, error)
+	Update(rule *entities.Rule) error
+	Delete(id int64) error
+}
+
 type EvaluationRepository interface {
 	FindAll() ([]*entities.Evaluation, error)
 	UpsertBatch(evaluations []*entities.Evaluation) error
