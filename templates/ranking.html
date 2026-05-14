@@ -8,7 +8,7 @@
 
     <div class="d-flex flex-row align-items-center justify-content-between mb-3">
         <h2 class="mb-0 me-3">Ranking Results</h2>
-        <form action="/ranking" method="get">
+        <form method="get">
             <div class="row align-items-center">
                 <div class="col-auto">
                     <label for="strategy" class="form-label mb-0"><strong>Strategy:</strong></label>
@@ -20,6 +20,9 @@
                         <option value="minimax" {{ if eq .view.Strategy "minimax" }}selected{{ end }}>Minimax</option>
                     </select>
                 </div>
+                {{ range .view.Criteria }}
+                <input type="hidden" name="weight_{{ .ID }}" value="{{ .Weight }}">
+                {{ end }}
             </div>
         </form>
     </div>
@@ -73,9 +76,16 @@
     </div>
     {{ end }}
     {{ else }}
-    <div class="alert alert-info">
-        No evaluation data available. Please <a href="/">add evaluations</a> first.
-    </div>
+        {{ if .view.HasEvaluations }}
+        <div class="alert alert-warning">
+            <strong>No results:</strong> All alternatives have been excluded by the active Expert Logic Rules. 
+            Please <a href="/rules">review your rules</a> or <a href="/">adjust evaluations</a>.
+        </div>
+        {{ else }}
+        <div class="alert alert-info">
+            No evaluation data available. Please <a href="/">add evaluations</a> first.
+        </div>
+        {{ end }}
     {{ end }}
 
     {{ if .view.Scores }}

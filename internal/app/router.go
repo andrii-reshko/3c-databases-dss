@@ -2,7 +2,6 @@ package app
 
 import (
 	"html/template"
-	"net/http"
 	"os"
 	"path/filepath"
 
@@ -54,16 +53,9 @@ func SetupRouter(c *Container) *gin.Engine {
 		rulesRoutes.POST("/delete/:id", c.RuleHandler.DeleteRule)
 	}
 
-	notImplemented := func(ctx *gin.Context) {
-		ctx.HTML(http.StatusServiceUnavailable, "error.html", gin.H{
-			"title":   "Not Implemented",
-			"message": "This feature is not yet implemented.",
-		})
-	}
-
 	router.POST("/import", c.ImportHandler.ImportEvaluations)
 	router.POST("/import/voting", c.ImportHandler.ImportVoting)
-	router.GET("/sensitivity", notImplemented)
+	router.GET("/sensitivity", c.RankingHandler.ShowRanking)
 
 	altRoutes := router.Group("/alternatives")
 	{
