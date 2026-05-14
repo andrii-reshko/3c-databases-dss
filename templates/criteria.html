@@ -5,14 +5,39 @@
 {{template "navbar"}}
 
 <div class="container">
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item">
-            <a class="nav-link" href="/alternatives">Alternatives</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" href="/criteria">Criteria</a>
-        </li>
-    </ul>
+    <!-- Voting Import Section -->
+    <div class="card mb-4">
+        <div class="card-header"><strong>Determine Weights via Voting</strong></div>
+        <div class="card-body">
+            <p class="text-muted small mb-2">Upload expert votes via CSV to automatically calculate and assign new weights to your criteria.</p>
+            <form action="/import/voting" method="post" enctype="multipart/form-data">
+                {{ if .lastFile }}
+                <div class="alert alert-info py-2 mb-3">
+                    <small>Using previously uploaded file: <strong>{{ .lastFile }}</strong>. You can calculate with a different method without re-uploading.</small>
+                    <input type="hidden" name="original_filename" value="{{ .lastFile }}">
+                </div>
+                {{ end }}
+                <div class="row align-items-end g-3">
+                    <div class="col-md-5">
+                        <label for="import_file" class="form-label">Select voting file (CSV)</label>
+                        <input type="file" class="form-control" id="import_file" name="import_file" accept=".csv" {{ if not .lastFile }}required{{ end }}>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="voting_method" class="form-label">Voting Method</label>
+                        <select class="form-select" id="voting_method" name="voting_method">
+                            <option value="borda" {{ if eq .lastMethod "borda" }}selected{{ end }}>Borda Rule</option>
+                            <option value="copeland" {{ if eq .lastMethod "copeland" }}selected{{ end }}>Copeland Rule</option>
+                            <option value="simpson" {{ if eq .lastMethod "simpson" }}selected{{ end }}>Simpson Rule</option>
+                            <option value="relative_majority" {{ if eq .lastMethod "relative_majority" }}selected{{ end }}>Relative Majority</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-outline-success w-100">Calculate Weights</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Criteria</h2>

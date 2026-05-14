@@ -1,6 +1,7 @@
 package app
 
 import (
+	"dss/internal/domain/analytics"
 	"dss/internal/http"
 	"dss/internal/persistence"
 	"dss/internal/repositories"
@@ -20,6 +21,7 @@ type Container struct {
 	CriterionHandler   *http.CriterionHandler
 	EvaluationHandler  *http.EvaluationHandler
 	RankingHandler     *http.RankingHandler
+	ImportHandler      *http.ImportHandler
 }
 
 func NewContainer() (*Container, error) {
@@ -43,6 +45,8 @@ func NewContainer() (*Container, error) {
 		return nil, err
 	}
 
+	votingSvc := analytics.NewVotingService()
+
 	return &Container{
 		DB:                 db,
 		AlternativeRepo:    altRepo,
@@ -52,6 +56,7 @@ func NewContainer() (*Container, error) {
 		CriterionHandler:   http.NewCriterionHandler(critRepo),
 		EvaluationHandler:  http.NewEvaluationHandler(altRepo, critRepo, evalRepo),
 		RankingHandler:     http.NewRankingHandler(altRepo, critRepo, evalRepo),
+		ImportHandler:      http.NewImportHandler(critRepo, votingSvc),
 	}, nil
 }
 

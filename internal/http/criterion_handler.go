@@ -23,9 +23,18 @@ func (h *CriterionHandler) ListCriteria(c *gin.Context) {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})
 		return
 	}
+
+	lastFile := c.Query("last_file")
+	lastMethod := c.Query("last_method")
+	if lastMethod == "" {
+		lastMethod = "borda"
+	}
+
 	c.HTML(http.StatusOK, "criteria.html", gin.H{
-		"title":    "Criteria",
-		"criteria": criteria,
+		"title":      "Criteria",
+		"criteria":   criteria,
+		"lastFile":   lastFile,
+		"lastMethod": lastMethod,
 	})
 }
 

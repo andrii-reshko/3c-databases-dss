@@ -52,7 +52,9 @@ func SetupRouter(c *Container) *gin.Engine {
 			"message": "This feature is not yet implemented.",
 		})
 	}
-	router.POST("/import", notImplemented)
+
+	router.POST("/import", c.ImportHandler.ImportEvaluations)
+	router.POST("/import/voting", c.ImportHandler.ImportVoting)
 	router.GET("/sensitivity", notImplemented)
 
 	altRoutes := router.Group("/alternatives")
