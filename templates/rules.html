@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+{{template "head" .}}
+<body>
+{{template "navbar"}}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Expert Logic (Rules)</h2>
+        <a href="/rules/new" class="btn btn-outline-primary">Add New Rule</a>
+    </div>
+    
+    <p class="text-muted mb-4">Create conditional logic to adjust scores based on specific situations or completely filter out unacceptable alternatives.</p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Rule Name</th>
+            <th scope="col">Condition (IF)</th>
+            <th scope="col">Action (THEN)</th>
+            <th scope="col" class="text-end">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ range .view.Rules }}
+        <tr>
+            <td>{{ .Name }}</td>
+            <td>
+                {{ $crit := index $.view.CritMap .CriterionID }}
+                <strong>{{ if $crit }}{{ $crit.Name }}{{ else }}Unknown{{ end }}</strong>
+                {{ .Operator }} {{ .Value }}
+            </td>
+            <td>
+                {{ if eq .ActionType "exclude" }}
+                    <span class="badge bg-danger">Exclude Alternative</span>
+                {{ else }}
+                    <span class="badge bg-warning text-dark">Modify Score by {{ .ActionValue }}</span>
+                {{ end }}
+            </td>
+            <td class="text-end">
+                <a href="/rules/edit/{{ .ID }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <form action="/rules/delete/{{ .ID }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {{ else }}
+        <tr>
+            <td colspan="4">No rules found.</td>
+        </tr>
+        {{ end }}
+        </tbody>
+    </table>
+</div>
+
+{{template "scripts"}}
+</body>
+</html>

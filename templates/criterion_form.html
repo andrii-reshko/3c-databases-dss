@@ -12,13 +12,6 @@
             <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" name="name" value="{{ .criterion.Name }}" required>
         </div>
-        <div class="mb-3">
-            <label for="type" class="form-label">Type</label>
-            <select class="form-select" id="type" name="type">
-                <option value="maximize" {{ if eq .criterion.Type "maximize" }}selected{{ end }}>Max (higher is better)</option>
-                <option value="minimize" {{ if eq .criterion.Type "minimize" }}selected{{ end }}>Min (lower is better)</option>
-            </select>
-        </div>
         <div class="row">
             <div class="col-md-2 mb-3">
                 <label for="input_min" class="form-label">Input Min</label>

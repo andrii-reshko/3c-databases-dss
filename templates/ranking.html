@@ -8,7 +8,7 @@
 
     <div class="d-flex flex-row align-items-center justify-content-between mb-3">
         <h2 class="mb-0 me-3">Ranking Results</h2>
-        <form action="/ranking" method="get">
+        <form method="get">
             <div class="row align-items-center">
                 <div class="col-auto">
                     <label for="strategy" class="form-label mb-0"><strong>Strategy:</strong></label>
@@ -20,12 +20,14 @@
                         <option value="minimax" {{ if eq .view.Strategy "minimax" }}selected{{ end }}>Minimax</option>
                     </select>
                 </div>
+                {{ range .view.Criteria }}
+                <input type="hidden" name="weight_{{ .ID }}" value="{{ .Weight }}">
+                {{ end }}
             </div>
         </form>
     </div>
 
     {{ if .view.Scores }}
-
     {{ range $i, $score := .view.Scores }}
     <div class="mb-3 border-bottom pb-2">
         <div class="row" data-bs-toggle="collapse" data-bs-target="#alt-{{ $i }}">
@@ -47,25 +49,70 @@
                 </div>
                 <div class="collapse" id="alt-{{ $i }}">
                     <div class="row py-2">
-                    {{ range $j, $val := $score.CriteriaScoresExt }}
+                        {{ range $j, $crit := $.view.Criteria }}
                         <div class="col-9">
-                            {{ add $j 1 }} {{ $val.CriterionName }}
+                            {{ add $j 1 }} {{ $crit.Name }}
                         </div>
                         <div class="col-3 text-end">
-                            <div class="text-muted">{{ printf "%.4f" $val.Score }}</div>
+                            <div class="text-muted">{{ printf "%.4f" (index $score.CriteriaScores $crit.ID) }}</div>
                         </div>
-                    {{ end }}
+                        {{ end }}
                     </div>
+                    {{ if $score.AppliedRules }}
+                    <div class="row py-2 mt-2 bg-light rounded">
+                        <div class="col-12">
+                            <small class="text-warning text-dark fw-bold">Applied Logic Rules:</small>
+                            <ul class="mb-0 small text-muted">
+                                {{ range $score.AppliedRules }}
+                                <li>{{ . }}</li>
+                                {{ end }}
+                            </ul>
+                        </div>
+                    </div>
+                    {{ end }}
                 </div>
             </div>
         </div>
     </div>
     {{ end }}
     {{ else }}
-    <div class="alert alert-info">
-        No evaluation data available. Please <a href="/">add evaluations</a> first.
+        {{ if .view.HasEvaluations }}
+        <div class="alert alert-warning">
+            <strong>No results:</strong> All alternatives have been excluded by the active Expert Logic Rules. 
+            Please <a href="/rules">review your rules</a> or <a href="/">adjust evaluations</a>.
+        </div>
+        {{ else }}
+        <div class="alert alert-info">
+            No evaluation data available. Please <a href="/">add evaluations</a> first.
+        </div>
+        {{ end }}
+    {{ end }}
+
+    {{ if .view.Scores }}
+    <!-- Sensitivity Analysis -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Sensitivity Analysis
+        </div>
+        <div class="card-body">
+            <form action="/sensitivity" method="get">
+                <input type="hidden" name="strategy" value="{{ .view.Strategy }}">
+                <div class="row g-3 mb-3">
+                {{ range .view.Criteria }}
+                    <div class="col-md-3">
+                        <label class="form-label small">{{ .Name }} (current: {{ .Weight }})</label>
+                        <input type="number" step="any" class="form-control form-control-sm"
+                               name="weight_{{ .ID }}" value="{{ .Weight }}">
+                    </div>
+                {{ end }}
+                </div>
+                <button type="submit" class="btn btn-outline-primary">Recalculate</button>
+                <a href="/ranking?strategy={{ .view.Strategy }}" class="btn btn-outline-secondary ms-2">Reset</a>
+            </form>
+        </div>
     </div>
     {{ end }}
+
 </div>
 
 {{template "scripts"}}

@@ -15,11 +15,10 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "Pub time sub 1h",
 			c: &Criterion{
-				Type:      TypeMinimize,
 				InputMin:  1,
 				InputMax:  24,
-				OutputMin: 0,
-				OutputMax: 1,
+				OutputMin: 1,
+				OutputMax: 0,
 			},
 			input:    0.5, // sub 1h is ok
 			expected: 1,
@@ -27,23 +26,21 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "Pub time 12h",
 			c: &Criterion{
-				Type:      TypeMinimize,
 				InputMin:  1,
 				InputMax:  24,
-				OutputMin: 0,
-				OutputMax: 1,
+				OutputMin: 1,
+				OutputMax: 0,
 			},
 			input:    12,
-			expected: 0.521,
+			expected: 0.521, // 1 - norm(12) = 1 - (12-1)/(24-1) = 1 - 11/23 = 12/23 = ~0.5217
 		},
 		{
 			name: "Pub time 24h plus",
 			c: &Criterion{
-				Type:      TypeMinimize,
 				InputMin:  1,
 				InputMax:  24,
-				OutputMin: 0,
-				OutputMax: 1,
+				OutputMin: 1,
+				OutputMax: 0,
 			},
 			input:    36, // 24h plus is bad
 			expected: 0,
@@ -51,11 +48,10 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "Interviewing 0",
 			c: &Criterion{
-				Type:      TypeMinimize,
 				InputMin:  5,
 				InputMax:  5,
-				OutputMin: 0,
-				OutputMax: 1,
+				OutputMin: 1,
+				OutputMax: 0,
 			},
 			input:    0,
 			expected: 1, // no active interviews - ok
@@ -63,11 +59,10 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "Interviewing 4",
 			c: &Criterion{
-				Type:      TypeMinimize,
 				InputMin:  5,
 				InputMax:  5,
-				OutputMin: 0,
-				OutputMax: 1,
+				OutputMin: 1,
+				OutputMax: 0,
 			},
 			input:    4, // 4 is still ok
 			expected: 1,
@@ -75,11 +70,10 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "Interviewing 5",
 			c: &Criterion{
-				Type:      TypeMinimize,
 				InputMin:  5,
 				InputMax:  5,
-				OutputMin: 0,
-				OutputMax: 1,
+				OutputMin: 1,
+				OutputMax: 0,
 			},
 			input:    5, // 5 active interviews - immediately bad
 			expected: 0,
@@ -87,7 +81,6 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "Duration - short term",
 			c: &Criterion{
-				Type:      TypeMaximize,
 				InputMin:  1,
 				InputMax:  6,
 				OutputMin: 0.5,
@@ -99,7 +92,6 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "Duration - very long term",
 			c: &Criterion{
-				Type:      TypeMaximize,
 				InputMin:  1,
 				InputMax:  6,
 				OutputMin: 0.5,
@@ -111,7 +103,6 @@ func TestNormalize(t *testing.T) {
 		{
 			name: "Duration - semi long term",
 			c: &Criterion{
-				Type:      TypeMaximize,
 				InputMin:  1,
 				InputMax:  6,
 				OutputMin: 0.5,

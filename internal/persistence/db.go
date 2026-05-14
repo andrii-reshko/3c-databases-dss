@@ -25,7 +25,6 @@ func Migrate(db *sqlx.DB) error {
     CREATE TABLE IF NOT EXISTS criteria (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        type TEXT NOT NULL CHECK(type IN ('maximize', 'minimize')),
         description TEXT,
         input_min REAL NOT NULL DEFAULT 0,
         input_max REAL NOT NULL DEFAULT 1,
@@ -44,6 +43,18 @@ func Migrate(db *sqlx.DB) error {
         FOREIGN KEY (criterion_id) REFERENCES criteria(id) ON DELETE CASCADE
     );`
 
+	ruleSchema := `
+    CREATE TABLE IF NOT EXISTS rules (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        criterion_id INTEGER NOT NULL,
+        operator TEXT NOT NULL,
+        value REAL NOT NULL,
+        action_type TEXT NOT NULL,
+        action_value REAL NOT NULL,
+        FOREIGN KEY (criterion_id) REFERENCES criteria(id) ON DELETE CASCADE
+    );`
+
 	if _, err := db.Exec(alternativeSchema); err != nil {
 		return err
 	}
@@ -51,6 +62,9 @@ func Migrate(db *sqlx.DB) error {
 		return err
 	}
 	if _, err := db.Exec(evaluationSchema); err != nil {
+		return err
+	}
+	if _, err := db.Exec(ruleSchema); err != nil {
 		return err
 	}
 

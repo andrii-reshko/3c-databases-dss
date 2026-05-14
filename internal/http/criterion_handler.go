@@ -23,9 +23,18 @@ func (h *CriterionHandler) ListCriteria(c *gin.Context) {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})
 		return
 	}
+
+	lastFile := c.Query("last_file")
+	lastMethod := c.Query("last_method")
+	if lastMethod == "" {
+		lastMethod = "borda"
+	}
+
 	c.HTML(http.StatusOK, "criteria.html", gin.H{
-		"title":    "Criteria",
-		"criteria": criteria,
+		"title":      "Criteria",
+		"criteria":   criteria,
+		"lastFile":   lastFile,
+		"lastMethod": lastMethod,
 	})
 }
 
@@ -68,7 +77,6 @@ func (h *CriterionHandler) ShowCriterionForm(c *gin.Context) {
 func (h *CriterionHandler) CreateCriterion(c *gin.Context) {
 	var criterion entities.Criterion
 	criterion.Name = c.PostForm("name")
-	criterion.Type = entities.CriterionType(c.PostForm("type"))
 	criterion.Description = c.PostForm("description")
 	criterion.InputMin, _ = strconv.ParseFloat(c.PostForm("input_min"), 64)
 	criterion.InputMax, _ = strconv.ParseFloat(c.PostForm("input_max"), 64)
@@ -88,7 +96,6 @@ func (h *CriterionHandler) UpdateCriterion(c *gin.Context) {
 	var criterion entities.Criterion
 	criterion.ID = id
 	criterion.Name = c.PostForm("name")
-	criterion.Type = entities.CriterionType(c.PostForm("type"))
 	criterion.Description = c.PostForm("description")
 	criterion.InputMin, _ = strconv.ParseFloat(c.PostForm("input_min"), 64)
 	criterion.InputMax, _ = strconv.ParseFloat(c.PostForm("input_max"), 64)

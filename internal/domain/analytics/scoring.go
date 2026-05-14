@@ -7,14 +7,11 @@ import (
 )
 
 type AlternativeScore struct {
-	Alternative       *entities.Alternative
-	Score             float64
-	RelativeScore     float64
-	CriteriaScores    map[int64]float64
-	CriteriaScoresExt []struct {
-		CriterionName string
-		Score         float64
-	}
+	Alternative    *entities.Alternative
+	Score          float64
+	RelativeScore  float64
+	CriteriaScores map[int64]float64
+	AppliedRules   []string
 }
 
 type ScoringService struct{}
@@ -28,26 +25,20 @@ func (s *ScoringService) Rank(
 	criteria []*entities.Criterion,
 	evaluations map[int64]map[int64]float64,
 	strategy ScoringStrategy,
+	rules []*entities.Rule,
 ) ([]*AlternativeScore, error) {
+	ruleEngine := NewRuleEngine()
+	ruleCtx := ruleEngine.Evaluate(alternatives, evaluations, rules)
+
 	intermediate := make([]*AlternativeScore, 0, len(alternatives))
 
 	for _, alt := range alternatives {
+		if ruleCtx.Excluded[alt.ID] {
+			continue // Skip alternatives that failed threshold rules
+		}
+
 		x, w := s.buildNormalizedArrays(alt.ID, criteria, evaluations)
 		criteriaScores := s.buildCriteriaScores(criteria, x, w)
-
-		criteriaScoresExt := make([]struct {
-			CriterionName string
-			Score         float64
-		}, len(criteria))
-		for i, crit := range criteria {
-			criteriaScoresExt[i] = struct {
-				CriterionName string
-				Score         float64
-			}{
-				CriterionName: crit.Name,
-				Score:         criteriaScores[crit.ID],
-			}
-		}
 
 		score, err := strategy.Eval(x, w)
 		if err != nil {
@@ -55,11 +46,14 @@ func (s *ScoringService) Rank(
 			score = 0
 		}
 
+		// Apply final score modifiers from IF-THEN rules
+		score *= ruleCtx.Multipliers[alt.ID]
+
 		intermediate = append(intermediate, &AlternativeScore{
-			Alternative:       alt,
-			Score:             score,
-			CriteriaScores:    criteriaScores,
-			CriteriaScoresExt: criteriaScoresExt,
+			Alternative:    alt,
+			Score:          score,
+			CriteriaScores: criteriaScores,
+			AppliedRules:   ruleCtx.AppliedRules[alt.ID],
 		})
 	}
 
@@ -79,11 +73,11 @@ func (s *ScoringService) Rank(
 			rel = 0
 		}
 		scores = append(scores, &AlternativeScore{
-			Alternative:       r.Alternative,
-			Score:             r.Score,
-			CriteriaScores:    r.CriteriaScores,
-			RelativeScore:     rel * 100,
-			CriteriaScoresExt: r.CriteriaScoresExt,
+			Alternative:    r.Alternative,
+			Score:          r.Score,
+			CriteriaScores: r.CriteriaScores,
+			RelativeScore:  rel * 100,
+			AppliedRules:   r.AppliedRules,
 		})
 	}
 
@@ -101,7 +95,7 @@ func (s *ScoringService) Rank(
 func (s *ScoringService) buildNormalizedArrays(altID int64, criteria []*entities.Criterion, evaluations map[int64]map[int64]float64) ([]float64, []float64) {
 	x := make([]float64, len(criteria))
 	w := make([]float64, len(criteria))
-
+	var wsum float64
 	for i, crit := range criteria {
 		row := evaluations[altID]
 		if row == nil {
@@ -113,8 +107,11 @@ func (s *ScoringService) buildNormalizedArrays(altID int64, criteria []*entities
 		if w[i] <= 0 {
 			w[i] = 1.0
 		}
+		wsum += w[i]
 	}
-
+	for i, _ := range w {
+		w[i] /= wsum
+	}
 	return x, w
 }
 

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+{{template "head" .}}
+<body>
+{{template "navbar"}}
+<div class="container">
+    <h2>{{ .title }}</h2>
+    <form action="{{ .action }}" method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label">Rule Name (e.g., 'Too expensive')</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ .rule.Name }}" required>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="criterion_id" class="form-label">If Criterion</label>
+                <select class="form-select" id="criterion_id" name="criterion_id" required>
+                    {{ range .criteria }}
+                    <option value="{{ .ID }}" {{ if eq .ID $.rule.CriterionID }}selected{{ end }}>{{ .Name }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="operator" class="form-label">Operator</label>
+                <select class="form-select" id="operator" name="operator" required>
+                    <option value=">" {{ if eq .rule.Operator ">" }}selected{{ end }}>&gt; (Greater than)</option>
+                    <option value="<" {{ if eq .rule.Operator "<" }}selected{{ end }}>&lt; (Less than)</option>
+                    <option value=">=" {{ if eq .rule.Operator ">=" }}selected{{ end }}>&ge; (Greater or equal)</option>
+                    <option value="<=" {{ if eq .rule.Operator "<=" }}selected{{ end }}>&le; (Less or equal)</option>
+                    <option value="==" {{ if eq .rule.Operator "==" }}selected{{ end }}>== (Equal)</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="value" class="form-label">Value</label>
+                <input type="number" step="any" class="form-control" id="value" name="value" value="{{ .rule.Value }}" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="action_type" class="form-label">Then Action</label>
+                <select class="form-select" id="action_type" name="action_type" required>
+                    <option value="modify" {{ if eq .rule.ActionType "modify" }}selected{{ end }}>Modify Score</option>
+                    <option value="exclude" {{ if eq .rule.ActionType "exclude" }}selected{{ end }}>Exclude Alternative (Threshold)</option>
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="action_value" class="form-label">Action Value (e.g. -0.2 for -20%, 0 for Exclude)</label>
+                <input type="number" step="any" class="form-control" id="action_value" name="action_value" value="{{ .rule.ActionValue }}" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Rule</button>
+        <a href="/rules" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{{template "scripts"}}
+</body>
+</html>

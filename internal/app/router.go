@@ -24,6 +24,8 @@ func SetupRouter(c *Container) *gin.Engine {
 		filepath.Join(getwd, "templates/criterion_form.html"),
 		filepath.Join(getwd, "templates/error.html"),
 		filepath.Join(getwd, "templates/ranking.html"),
+		filepath.Join(getwd, "templates/rules.html"),
+		filepath.Join(getwd, "templates/rule_form.html"),
 	}
 
 	tmpl := template.New("").Funcs(template.FuncMap{
@@ -40,6 +42,20 @@ func SetupRouter(c *Container) *gin.Engine {
 	router.GET("/", c.EvaluationHandler.ShowMatrix)
 	router.POST("/evaluations", c.EvaluationHandler.UpdateMatrix)
 	router.GET("/ranking", c.RankingHandler.ShowRanking)
+
+	rulesRoutes := router.Group("/rules")
+	{
+		rulesRoutes.GET("/", c.RuleHandler.ShowRules)
+		rulesRoutes.GET("/new", c.RuleHandler.ShowRuleForm)
+		rulesRoutes.POST("/new", c.RuleHandler.CreateRule)
+		rulesRoutes.GET("/edit/:id", c.RuleHandler.ShowRuleForm)
+		rulesRoutes.POST("/edit/:id", c.RuleHandler.UpdateRule)
+		rulesRoutes.POST("/delete/:id", c.RuleHandler.DeleteRule)
+	}
+
+	router.POST("/import", c.ImportHandler.ImportEvaluations)
+	router.POST("/import/voting", c.ImportHandler.ImportVoting)
+	router.GET("/sensitivity", c.RankingHandler.ShowRanking)
 
 	altRoutes := router.Group("/alternatives")
 	{

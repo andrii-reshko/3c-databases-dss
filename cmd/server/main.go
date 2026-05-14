@@ -14,8 +14,8 @@ func main() {
 
 	router := app.SetupRouter(container)
 
-	log.Println("Starting server on :8080")
-	if err := router.Run(":8080"); err != nil {
+	log.Println("Starting server on :8088")
+	if err := router.Run(":8088"); err != nil {
 		log.Fatalf("failed to run server: %v", err)
 	}
 }
