@@ -2,6 +2,7 @@ package http
 
 import (
 	"dss/internal/domain/analytics"
+	"dss/internal/domain/entities"
 	"dss/internal/repositories"
 	"encoding/csv"
 	"net/http"
@@ -15,13 +16,17 @@ import (
 
 type ImportHandler struct {
 	critRepo  repositories.CriterionRepository
+	evalRepo  repositories.EvaluationRepository
 	votingSvc *analytics.VotingService
+	expertSvc *analytics.ExpertEvaluationService
 }
 
-func NewImportHandler(critRepo repositories.CriterionRepository, votingSvc *analytics.VotingService) *ImportHandler {
+func NewImportHandler(critRepo repositories.CriterionRepository, evalRepo repositories.EvaluationRepository, votingSvc *analytics.VotingService, expertSvc *analytics.ExpertEvaluationService) *ImportHandler {
 	return &ImportHandler{
 		critRepo:  critRepo,
+		evalRepo:  evalRepo,
 		votingSvc: votingSvc,
+		expertSvc: expertSvc,
 	}
 }
 
@@ -121,10 +126,95 @@ func (h *ImportHandler) ImportVoting(c *gin.Context) {
 }
 
 func (h *ImportHandler) ImportEvaluations(c *gin.Context) {
-	// Stub implementation to replace the generic "not implemented"
-	// Since evaluations format isn't strictly defined, we can just redirect or show a dummy success
-	c.HTML(http.StatusOK, "error.html", gin.H{
-		"title":   "Import Evaluations",
-		"message": "Evaluation import parsed successfully. Feature implementation is in progress.",
-	})
+	fileHeader, err := c.FormFile("import_file")
+	if err != nil {
+		c.HTML(http.StatusBadRequest, "error.html", gin.H{"title": "Error", "message": "No file uploaded"})
+		return
+	}
+
+	methodStr := c.PostForm("aggregation_method")
+	if methodStr == "" {
+		methodStr = string(analytics.WeightedMean)
+	}
+
+	file, err := fileHeader.Open()
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": "Could not open file"})
+		return
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil || len(records) < 2 {
+		c.HTML(http.StatusBadRequest, "error.html", gin.H{"title": "Error", "message": "Invalid CSV file"})
+		return
+	}
+
+	// Parsing CSV: First row: "ExpertID", "AlternativeID", CritID1, CritID2...
+	if len(records[0]) < 3 {
+		c.HTML(http.StatusBadRequest, "error.html", gin.H{"title": "Error", "message": "Invalid CSV format (need at least Expert, Alt, and 1 Criterion)"})
+		return
+	}
+
+	var critIDs []int64
+	for _, header := range records[0][2:] {
+		id, err := strconv.ParseInt(strings.TrimSpace(header), 10, 64)
+		if err != nil {
+			continue
+		}
+		critIDs = append(critIDs, id)
+	}
+
+	expertEvals := make(map[string]map[int64]map[int64]float64)
+
+	for i, row := range records {
+		if i == 0 {
+			continue
+		}
+		if len(row) < len(critIDs)+2 {
+			continue
+		}
+
+		expertID := strings.TrimSpace(row[0])
+		altID, err := strconv.ParseInt(strings.TrimSpace(row[1]), 10, 64)
+		if err != nil {
+			continue
+		}
+
+		if expertEvals[expertID] == nil {
+			expertEvals[expertID] = make(map[int64]map[int64]float64)
+		}
+		if expertEvals[expertID][altID] == nil {
+			expertEvals[expertID][altID] = make(map[int64]float64)
+		}
+
+		for j, valStr := range row[2 : 2+len(critIDs)] {
+			val, err := strconv.ParseFloat(strings.TrimSpace(valStr), 64)
+			if err == nil {
+				critID := critIDs[j]
+				expertEvals[expertID][altID][critID] = val
+			}
+		}
+	}
+
+	aggregated := h.expertSvc.AggregateEvaluations(expertEvals, analytics.AggregationMethod(methodStr))
+
+	var batch []*entities.Evaluation
+	for altID, critMap := range aggregated {
+		for critID, score := range critMap {
+			batch = append(batch, &entities.Evaluation{
+				AlternativeID: altID,
+				CriterionID:   critID,
+				Value:         score,
+			})
+		}
+	}
+
+	if err := h.evalRepo.UpsertBatch(batch); err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"title": "Error", "message": err.Error()})
+		return
+	}
+
+	c.Redirect(http.StatusSeeOther, "/")
 }

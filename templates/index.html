@@ -9,24 +9,25 @@
 
     <!-- File Import -->
     <div class="card mb-4">
-        <div class="card-header"><strong>Import Scores from File</strong></div>
+        <div class="card-header"><strong>Import Expert Evaluations</strong></div>
         <div class="card-body">
-            <p class="text-muted small mb-2">Upload expert responses via CSV (e.g., from Google Forms) or JSON.</p>
+            <p class="text-muted small mb-2">Upload expert responses via CSV. The format should be: Expert_ID, Alternative_ID, followed by Criterion IDs as headers.</p>
             <form action="/import" method="post" enctype="multipart/form-data">
                 <div class="row align-items-end g-3">
                     <div class="col-md-5">
-                        <label for="import_file" class="form-label">Select file (CSV or JSON)</label>
-                        <input type="file" class="form-control" id="import_file" name="import_file" accept=".csv,.json">
+                        <label for="import_file" class="form-label">Select file (CSV)</label>
+                        <input type="file" class="form-control" id="import_file" name="import_file" accept=".csv" required>
                     </div>
-                    <div class="col-md-3">
-                        <label for="import_format" class="form-label">Format</label>
-                        <select class="form-select" id="import_format" name="import_format">
-                            <option value="csv">CSV</option>
-                            <option value="json">JSON</option>
+                    <div class="col-md-4">
+                        <label for="aggregation_method" class="form-label">Aggregation Method</label>
+                        <select class="form-select" id="aggregation_method" name="aggregation_method">
+                            <option value="weighted_mean">Weighted Mean (Expertise 1)</option>
+                            <option value="sum_of_ranks">Sum of Ranks + Concordance (Expertise 4)</option>
+                            <option value="kemeny_snell">Kemeny-Snell Median</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-outline-primary w-100">Upload</button>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-outline-primary w-100">Upload & Aggregate</button>
                     </div>
                 </div>
             </form>

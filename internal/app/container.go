@@ -49,6 +49,7 @@ func NewContainer() (*Container, error) {
 	}
 
 	votingSvc := analytics.NewVotingService()
+	expertSvc := analytics.NewExpertEvaluationService()
 
 	return &Container{
 		DB:                 db,
@@ -60,7 +61,7 @@ func NewContainer() (*Container, error) {
 		CriterionHandler:   http.NewCriterionHandler(critRepo),
 		EvaluationHandler:  http.NewEvaluationHandler(altRepo, critRepo, evalRepo),
 		RankingHandler:     http.NewRankingHandler(altRepo, critRepo, evalRepo, ruleRepo),
-		ImportHandler:      http.NewImportHandler(critRepo, votingSvc),
+		ImportHandler:      http.NewImportHandler(critRepo, evalRepo, votingSvc, expertSvc),
 		RuleHandler:        http.NewRuleHandler(ruleRepo, critRepo),
 	}, nil
 }
