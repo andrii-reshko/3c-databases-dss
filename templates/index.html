@@ -5,7 +5,36 @@
 {{template "navbar"}}
 
 <div class="container">
-    <h2>Evaluation Matrix</h2>
+    <h2>Expertise</h2>
+
+    <!-- File Import -->
+    <div class="card mb-4">
+        <div class="card-header"><strong>Import Scores from File</strong></div>
+        <div class="card-body">
+            <p class="text-muted small mb-2">Upload expert responses via CSV (e.g., from Google Forms) or JSON.</p>
+            <form action="/import" method="post" enctype="multipart/form-data">
+                <div class="row align-items-end g-3">
+                    <div class="col-md-5">
+                        <label for="import_file" class="form-label">Select file (CSV or JSON)</label>
+                        <input type="file" class="form-control" id="import_file" name="import_file" accept=".csv,.json">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="import_format" class="form-label">Format</label>
+                        <select class="form-select" id="import_format" name="import_format">
+                            <option value="csv">CSV</option>
+                            <option value="json">JSON</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-outline-primary w-100">Upload</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Manual Entry -->
+    <h5 class="mb-3">Manual Score Entry</h5>
 
     <form action="/evaluations" method="post">
         <div class="table-responsive">

@@ -2,6 +2,7 @@ package app
 
 import (
 	"html/template"
+	"net/http"
 	"os"
 	"path/filepath"
 
@@ -24,6 +25,7 @@ func SetupRouter(c *Container) *gin.Engine {
 		filepath.Join(getwd, "templates/criterion_form.html"),
 		filepath.Join(getwd, "templates/error.html"),
 		filepath.Join(getwd, "templates/ranking.html"),
+		filepath.Join(getwd, "templates/rules.html"),
 	}
 
 	tmpl := template.New("").Funcs(template.FuncMap{
@@ -40,6 +42,18 @@ func SetupRouter(c *Container) *gin.Engine {
 	router.GET("/", c.EvaluationHandler.ShowMatrix)
 	router.POST("/evaluations", c.EvaluationHandler.UpdateMatrix)
 	router.GET("/ranking", c.RankingHandler.ShowRanking)
+	router.GET("/rules", func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "rules.html", gin.H{"title": "Expert Logic"})
+	})
+
+	notImplemented := func(ctx *gin.Context) {
+		ctx.HTML(http.StatusServiceUnavailable, "error.html", gin.H{
+			"title":   "Not Implemented",
+			"message": "This feature is not yet implemented.",
+		})
+	}
+	router.POST("/import", notImplemented)
+	router.GET("/sensitivity", notImplemented)
 
 	altRoutes := router.Group("/alternatives")
 	{

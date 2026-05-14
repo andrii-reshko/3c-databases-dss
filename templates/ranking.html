@@ -25,7 +25,6 @@
     </div>
 
     {{ if .view.Scores }}
-
     {{ range $i, $score := .view.Scores }}
     <div class="mb-3 border-bottom pb-2">
         <div class="row" data-bs-toggle="collapse" data-bs-target="#alt-{{ $i }}">
@@ -47,14 +46,14 @@
                 </div>
                 <div class="collapse" id="alt-{{ $i }}">
                     <div class="row py-2">
-                    {{ range $j, $crit := $.view.Criteria }}
+                        {{ range $j, $crit := $.view.Criteria }}
                         <div class="col-9">
                             {{ add $j 1 }} {{ $crit.Name }}
                         </div>
                         <div class="col-3 text-end">
                             <div class="text-muted">{{ printf "%.4f" (index $score.CriteriaScores $crit.ID) }}</div>
                         </div>
-                    {{ end }}
+                        {{ end }}
                     </div>
                 </div>
             </div>
@@ -66,6 +65,32 @@
         No evaluation data available. Please <a href="/">add evaluations</a> first.
     </div>
     {{ end }}
+
+    {{ if .view.Scores }}
+    <!-- Sensitivity Analysis -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Sensitivity Analysis
+        </div>
+        <div class="card-body">
+            <form action="/sensitivity" method="get">
+                <input type="hidden" name="strategy" value="{{ .view.Strategy }}">
+                <div class="row g-3 mb-3">
+                {{ range .view.Criteria }}
+                    <div class="col-md-3">
+                        <label class="form-label small">{{ .Name }} (current: {{ .Weight }})</label>
+                        <input type="number" step="any" class="form-control form-control-sm"
+                               name="weight_{{ .ID }}" value="{{ .Weight }}">
+                    </div>
+                {{ end }}
+                </div>
+                <button type="submit" class="btn btn-outline-primary">Recalculate</button>
+                <a href="/ranking?strategy={{ .view.Strategy }}" class="btn btn-outline-secondary ms-2">Reset</a>
+            </form>
+        </div>
+    </div>
+    {{ end }}
+
 </div>
 
 {{template "scripts"}}

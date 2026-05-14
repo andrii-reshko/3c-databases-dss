@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+{{template "head" .}}
+<body>
+{{template "navbar"}}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Expert Logic (Rules)</h2>
+    </div>
+    
+    <div class="row">
+        <!-- Thresholds Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Thresholds (Cut-off values)</strong>
+                    <button class="btn btn-sm btn-outline-primary" disabled>Add</button>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">Set minimum or maximum acceptable values for criteria.</p>
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th>Criterion</th>
+                            <th>Condition</th>
+                            <th>Value</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Placeholder rows for UI -->
+                        <tr>
+                            <td>Price</td>
+                            <td>&le;</td>
+                            <td>1000</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Quality</td>
+                            <td>&ge;</td>
+                            <td>4.0</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- IF-THEN Rules Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>IF-THEN Rules</strong>
+                    <button class="btn btn-sm btn-outline-primary" disabled>Add Rule</button>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">Create conditional logic to adjust scores based on specific situations.</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>IF</strong> <em>Price</em> &gt; 800 <strong>AND</strong> <em>Quality</em> &lt; 3.0 <br>
+                                <strong>THEN</strong> Set status to <em>Rejected</em>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>IF</strong> <em>Brand</em> == "Premium" <br>
+                                <strong>THEN</strong> Increase <em>Overall Score</em> by 5%
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{template "scripts"}}
+</body>
+</html>
